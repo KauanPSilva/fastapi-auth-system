@@ -40,3 +40,22 @@ def login(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
         "refresh_token": refresh_token,
         "token_type": "bearer"
     }
+
+
+@router.post("/refesh-token", response_model=schemas.TokenResponse)
+def refresh_token(refresh: schemas.RefreshRequest):
+    
+    payload = jwt.verify_token(refresh.refresh_token)
+
+    if not payload:
+        raise HTTPException(status_code=401, detail="Refresh token invalid or expired")
+
+    user_id = payload.get("sub")
+    new_access_token = jwt.create_access_token(data={"sub": user_id})
+    new_refresh_token = jwt.create_refresh_token(data={"sub": user_id})  
+
+    return {
+        "access_token": new_access_token,
+        "refresh_token": new_refresh_token,
+        "token_type": "bearer"
+    }
