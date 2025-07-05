@@ -11,5 +11,5 @@ app.include_router(auth_routes.router)
 
 @app.get("/")
 async def root():
-    return {"message": "System ON !!!"}
+    return {"message": "System's ON !!!"}
 
